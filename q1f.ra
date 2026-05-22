@@ -1,61 +1,73 @@
 \rename_{name1, name2}
 (
-  /* all ordered customer pairs with a < b */
-  \select_{a < b}
   (
-    \rename_{a} \project_{name} customer
-    \cross
-    \rename_{b} \project_{name} customer
-  )
-  \diff
-  /* (a,b), a<b, where a took a loan b did not  -> BadDir restricted to a<b */
-  \select_{a < b}
-  (
-    \project_{a, b}
+    /* all ordered customer pairs with a < b */
+    \select_{a < b}
     (
-      (
-        \rename_{a, l} \project_{cname, lno} borrower
-        \cross
-        \rename_{b} \project_{name} customer
-      )
-      \diff
-      \project_{a, b, l}
-        \select_{b = c2 and l = l2}
-        (
-          (
-            \rename_{a, l} \project_{cname, lno} borrower
-            \cross
-            \rename_{b} \project_{name} customer
-          )
-          \cross
-          \rename_{c2, l2} \project_{cname, lno} borrower
-        )
+      ( \rename_{a} \project_{name} customer )
+      \cross
+      ( \rename_{b} \project_{name} customer )
     )
   )
   \diff
-  /* (a,b), a<b, where b took a loan a did not  -> swap(BadDir), a<b region */
-  \select_{a < b}
-  \rename_{a, b}
   (
-    \project_{b, a}
-    (
+    /* (a,b), a<b, where a took a loan b did NOT take : BadDir restricted */
+    \select_{a < b}
+      \project_{a, b}
       (
-        \rename_{a, l} \project_{cname, lno} borrower
-        \cross
-        \rename_{b} \project_{name} customer
-      )
-      \diff
-      \project_{a, b, l}
-        \select_{b = c2 and l = l2}
-        (
-          (
-            \rename_{a, l} \project_{cname, lno} borrower
-            \cross
-            \rename_{b} \project_{name} customer
-          )
-          \cross
-          \rename_{c2, l2} \project_{cname, lno} borrower
+        ( \project_{a, b, l}
+            (
+              ( \rename_{a, l} \project_{cname, lno} borrower )
+              \cross
+              ( \rename_{b} \project_{name} customer )
+            )
         )
-    )
+        \diff
+        ( \project_{a, b, l}
+            \select_{b = c2 and l = l2}
+            (
+              ( \project_{a, b, l}
+                  (
+                    ( \rename_{a, l} \project_{cname, lno} borrower )
+                    \cross
+                    ( \rename_{b} \project_{name} customer )
+                  )
+              )
+              \cross
+              ( \rename_{c2, l2} \project_{cname, lno} borrower )
+            )
+        )
+      )
+  )
+  \diff
+  (
+    /* (a,b), a<b, where b took a loan a did NOT take : swap of BadDir */
+    \select_{a < b}
+      \rename_{a, b}
+        \project_{b, a}
+        (
+          ( \project_{a, b, l}
+              (
+                ( \rename_{a, l} \project_{cname, lno} borrower )
+                \cross
+                ( \rename_{b} \project_{name} customer )
+              )
+          )
+          \diff
+          ( \project_{a, b, l}
+              \select_{b = c2 and l = l2}
+              (
+                ( \project_{a, b, l}
+                    (
+                      ( \rename_{a, l} \project_{cname, lno} borrower )
+                      \cross
+                      ( \rename_{b} \project_{name} customer )
+                    )
+                )
+                \cross
+                ( \rename_{c2, l2} \project_{cname, lno} borrower )
+              )
+          )
+        )
   )
 );

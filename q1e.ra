@@ -3,31 +3,41 @@
 (
   /* ===== LoanCnt copy #1 ===== */
   (
-    \rename_{no, type, bcnt}
-      \aggr_{no, type: count(cname)} ( loan \join_{no = lno} borrower )
-    \union
-    \rename_{no, type, bcnt}
-      \aggr_{no, type: count(no) - count(no)}
-      (
-        \project_{no, type, minCredit} loan
-        \diff
-        \project_{no, type, minCredit} ( loan \join_{no = lno} borrower )
-      )
-  )
-  \join_{type = t2}
-  /* ===== TypeAvg over LoanCnt copy #2 ===== */
-  \rename_{t2, avgcnt}
-    \aggr_{type: avg(bcnt)}
     (
       \rename_{no, type, bcnt}
         \aggr_{no, type: count(cname)} ( loan \join_{no = lno} borrower )
-      \union
+    )
+    \union
+    (
       \rename_{no, type, bcnt}
         \aggr_{no, type: count(no) - count(no)}
         (
-          \project_{no, type, minCredit} loan
+          ( \project_{no, type, minCredit} loan )
           \diff
-          \project_{no, type, minCredit} ( loan \join_{no = lno} borrower )
+          ( \project_{no, type, minCredit} ( loan \join_{no = lno} borrower ) )
         )
     )
+  )
+  \join_{type = t2}
+  /* ===== TypeAvg over LoanCnt copy #2 ===== */
+  (
+    \rename_{t2, avgcnt}
+      \aggr_{type: avg(bcnt)}
+      (
+        (
+          \rename_{no, type, bcnt}
+            \aggr_{no, type: count(cname)} ( loan \join_{no = lno} borrower )
+        )
+        \union
+        (
+          \rename_{no, type, bcnt}
+            \aggr_{no, type: count(no) - count(no)}
+            (
+              ( \project_{no, type, minCredit} loan )
+              \diff
+              ( \project_{no, type, minCredit} ( loan \join_{no = lno} borrower ) )
+            )
+        )
+      )
+  )
 );
