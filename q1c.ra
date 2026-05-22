@@ -1,0 +1,19 @@
+\rename_{loanType}
+(
+  \project_{type}
+    \rename_{type, cnt}
+      \aggr_{type: count(cname)}
+        \project_{type, cname} ( borrower \join_{lno = no} loan )
+  \diff
+  \project_{type}
+    \select_{cnt > cnt2}
+    (
+      \rename_{type, cnt}
+        \aggr_{type: count(cname)}
+          \project_{type, cname} ( borrower \join_{lno = no} loan )
+      \cross
+      \rename_{type2, cnt2}
+        \aggr_{type: count(cname)}
+          \project_{type, cname} ( borrower \join_{lno = no} loan )
+    )
+);

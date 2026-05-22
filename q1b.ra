@@ -1,0 +1,8 @@
+\rename_{name, loanCount}
+  \aggr_{cname: count(lno)} borrower
+\union
+\rename_{name, loanCount}
+  \aggr_{name: count(name) - count(name)}
+    ( \project_{name} customer
+      \diff
+      \rename_{name} \project_{cname} borrower );

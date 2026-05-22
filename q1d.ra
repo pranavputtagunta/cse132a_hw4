@@ -1,0 +1,17 @@
+\project_{name}
+  \rename_{name, type}
+    \project_{cname, type} ( borrower \join_{lno = no} loan )
+\diff
+\project_{name}
+(
+  (
+    \project_{name}
+      \rename_{name, type}
+        \project_{cname, type} ( borrower \join_{lno = no} loan )
+    \cross
+    \project_{type} loan
+  )
+  \diff
+  \rename_{name, type}
+    \project_{cname, type} ( borrower \join_{lno = no} loan )
+);

@@ -1,0 +1,4 @@
+\project_{name, no}
+  \select_{credit < minCredit}
+    ( ( customer \join_{name = cname} borrower )
+        \join_{lno = no} loan );
